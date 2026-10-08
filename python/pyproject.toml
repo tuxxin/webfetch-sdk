@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "webfetch"
+name = "webfetch-io"
 version = "1.0.0"
 description = "Official Python client for the webfetch.io scraping API."
 readme = "README.md"

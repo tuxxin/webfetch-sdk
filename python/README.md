@@ -1,10 +1,10 @@
-# webfetch
+# webfetch-io
 
 Official Python client for the [webfetch.io](https://webfetch.io) scraping API.
 Python 3.9+, sync and async, one dependency (`httpx`).
 
 ```bash
-pip install webfetch
+pip install webfetch-io
 ```
 
 ## Use

@@ -9,7 +9,7 @@ ScrapingBee-compatible, so parameter names, defaults and credit costs match.
 | Language | Install | Requires |
 |---|---|---|
 | JavaScript | `npm install @tuxxin/webfetch` | Node 18+, no runtime dependencies |
-| Python | `pip install webfetch` | Python 3.9+, `httpx` |
+| Python | `pip install webfetch-io` (imports as `webfetch`) | Python 3.9+, `httpx` |
 | PHP | `composer require tuxxin/webfetch` | PHP 8.1+, ext-curl |
 
 ## The shape is the same in all three
