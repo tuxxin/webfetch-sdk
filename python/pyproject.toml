@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "webfetch"
+version = "1.0.0"
+description = "Official Python client for the webfetch.io scraping API."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Tuxxin" }]
+requires-python = ">=3.9"
+dependencies = ["httpx>=0.24"]
+keywords = ["scraping", "scraper", "crawler", "headless", "extraction", "webfetch"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Intended Audience :: Developers",
+  "Topic :: Internet :: WWW/HTTP",
+]
+
+[project.urls]
+Documentation = "https://webfetch.io/documentation"
+Source = "https://github.com/tuxxin/webfetch-sdk"
+
+[tool.setuptools.packages.find]
+include = ["webfetch*"]

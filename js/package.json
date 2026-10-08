@@ -1,0 +1,23 @@
+{
+  "name": "@tuxxin/webfetch",
+  "version": "1.0.0",
+  "description": "Official JavaScript client for the webfetch.io scraping API. Fetch any URL as HTML, text, markdown or structured JSON.",
+  "license": "MIT",
+  "author": "Tuxxin",
+  "homepage": "https://webfetch.io/documentation",
+  "repository": { "type": "git", "url": "https://github.com/tuxxin/webfetch-sdk" },
+  "keywords": ["scraping", "scraper", "crawler", "headless", "extraction", "webfetch", "scrapingbee"],
+  "type": "module",
+  "main": "./src/index.cjs",
+  "module": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "require": "./src/index.cjs"
+    }
+  },
+  "files": ["src", "README.md", "LICENSE"],
+  "engines": { "node": ">=18" }
+}

@@ -1,0 +1,5 @@
+# Composer installs from this repo's archive. Keep the other languages out of it.
+/js           export-ignore
+/python       export-ignore
+/.gitattributes export-ignore
+/.gitignore   export-ignore
