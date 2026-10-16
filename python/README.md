@@ -37,6 +37,26 @@ async with AsyncWebfetchClient("wfk_...") as client:
     result = await client.fetch("https://example.com", render_js=False)
 ```
 
+## Search
+
+```python
+results = client.bing("python asyncio tutorial", country_code="us")
+for r in results["organic_results"]:
+    print(r["position"], r["title"], r["url"])
+
+ads = client.search("yahoo", "car insurance quotes", search_type="ads")
+print(ads.credits, ads.json()["top_ads"])
+```
+
+`bing()`, `yahoo()` and `google()` return the parsed response; `search(engine, query)`
+returns the result object, with `credits` and `json()`. The async client has the
+same methods.
+Needs a paid plan with the robots.txt opt-out turned on for the key in the
+[key portal](https://webfetch.io/key): every engine's robots.txt disallows its
+result pages. Bing and Yahoo are open; Google answers `503 engine_unavailable`
+until it opens. 10 credits a page, 15 with `light_request` false; a failed
+search costs nothing. Reference: <https://webfetch.io/documentation#search>.
+
 ## Errors
 
 ```python

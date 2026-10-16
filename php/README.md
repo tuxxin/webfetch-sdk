@@ -43,6 +43,26 @@ $client = new WebfetchClient('wfk_...', 'https://localhost:1115/api/v1/', 180, [
 ]);
 ```
 
+## Search
+
+```php
+$results = $client->bing('python asyncio tutorial', ['country_code' => 'us']);
+foreach ($results['organic_results'] as $r) {
+    echo $r['position'], ' ', $r['title'], ' ', $r['url'], "\n";
+}
+
+$ads = $client->search('yahoo', 'car insurance quotes', ['search_type' => 'ads']);
+echo $ads->credits, count($ads->json()['top_ads']);
+```
+
+`bing()`, `yahoo()` and `google()` return the decoded response; `search($engine, $query)`
+returns the result object, with `credits` and `json()`.
+Needs a paid plan with the robots.txt opt-out turned on for the key in the
+[key portal](https://webfetch.io/key): every engine's robots.txt disallows its
+result pages. Bing and Yahoo are open; Google answers `503 engine_unavailable`
+until it opens. 10 credits a page, 15 with `light_request` false; a failed
+search costs nothing. Reference: <https://webfetch.io/documentation#search>.
+
 ## Errors
 
 ```php

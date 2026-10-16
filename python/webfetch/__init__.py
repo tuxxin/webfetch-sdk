@@ -1,4 +1,4 @@
-"""Official Python client for the webfetch.io scraping API."""
+"""Official Python client for the webfetch.io scraping and search API."""
 
 from .client import (
     WebfetchClient,
@@ -7,6 +7,7 @@ from .client import (
     WebfetchError,
     WebfetchApiError,
     WebfetchRateLimitError,
+    SEARCH_ENGINES,
 )
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     "WebfetchError",
     "WebfetchApiError",
     "WebfetchRateLimitError",
+    "SEARCH_ENGINES",
 ]
-__version__ = "1.0.0"
+__version__ = "1.1.0"

@@ -1,10 +1,11 @@
 # Webfetch SDKs
 
-Official clients for the [webfetch.io](https://webfetch.io) scraping API, in
-JavaScript, Python and PHP. MIT licensed.
+Official clients for the [webfetch.io](https://webfetch.io) scraping and search
+API, in JavaScript, Python and PHP. MIT licensed.
 
-Each one wraps `GET https://api.webfetch.io/v1/`. The API is
-ScrapingBee-compatible, so parameter names, defaults and credit costs match.
+Each one wraps `GET https://api.webfetch.io/v1/` and the search endpoints
+(`/v1/bing`, `/v1/yahoo`, `/v1/google`). The API is ScrapingBee-compatible, so
+parameter names, defaults and credit costs match.
 
 | Language | Install | Requires |
 |---|---|---|
@@ -24,6 +25,23 @@ result.status      the status the target returned
 result.resolved_url  where it ended up after redirects
 ```
 
+## Search
+
+```
+results = client.bing("python asyncio tutorial", country_code="us")
+results["organic_results"]   [{position, title, url, displayed_url, description, ...}]
+results["top_ads"]           [{position, title, url, tracking_url, domain, ...}]
+
+client.search("yahoo", query, search_type="ads")   the ads only, same price
+```
+
+The response has the shape of ScrapingBee's Google Search API.
+Needs a paid plan with the robots.txt opt-out turned on for the key in the
+[key portal](https://webfetch.io/key): every engine's robots.txt disallows its
+result pages. Bing and Yahoo are open; Google answers `503 engine_unavailable`
+until it opens. 10 credits a page, 15 with `light_request` false; a failed
+search costs nothing. Reference: <https://webfetch.io/documentation#search>.
+
 ## Credits
 
 | Request | Credits |
@@ -32,6 +50,8 @@ result.resolved_url  where it ended up after redirects
 | JavaScript rendering (the default) | 5 |
 | Premium proxy | 10, or 25 with rendering |
 | Stealth proxy | 75 |
+| Search, light request (the default) | 10 |
+| Search, `light_request` false | 15 |
 | Any failed request | 0 |
 
 `mode=auto` tries those routes cheapest first and charges only the one that

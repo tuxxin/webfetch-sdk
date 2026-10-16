@@ -1,5 +1,5 @@
 """
-Sync and async clients for the webfetch.io scraping API.
+Sync and async clients for the webfetch.io scraping and search API.
 
 The API is ScrapingBee-compatible, so parameter names, defaults and credit costs
 match. Keyword arguments are accepted in Python's snake_case, which is also the
@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json as _json
 from typing import Any, Dict, Mapping, Optional
+from urllib.parse import urlencode as _urlencode
 
 import httpx
 
@@ -18,6 +19,9 @@ DEFAULT_TIMEOUT = 180.0
 
 # Sent as stringified JSON rather than as a nested query structure.
 _JSON_PARAMS = ("extract_rules", "js_scenario")
+
+#: The search endpoints. Google answers 503 engine_unavailable until it opens.
+SEARCH_ENGINES = ("google", "bing", "yahoo")
 
 
 class WebfetchError(Exception):
@@ -83,20 +87,34 @@ class WebfetchResult:
                 f"bytes={len(self.content)} url={self.resolved_url!r}>")
 
 
-def _build(url: str, options: Mapping[str, Any]) -> Dict[str, str]:
-    if not url or not isinstance(url, str):
-        raise WebfetchError("url is required and must be a string")
-    params: Dict[str, str] = {"url": url}
+def _params(first: Dict[str, str], options: Mapping[str, Any]) -> Dict[str, str]:
+    params = dict(first)
     for key, value in options.items():
         if value is None or key == "headers":
             continue
         if key in _JSON_PARAMS and isinstance(value, (dict, list)):
             params[key] = _json.dumps(value, separators=(",", ":"))
+        elif key == "extra_params" and isinstance(value, Mapping):
+            params[key] = _urlencode(value)
         elif isinstance(value, bool):
             params[key] = "true" if value else "false"
         else:
             params[key] = str(value)
     return params
+
+
+def _build(url: str, options: Mapping[str, Any]) -> Dict[str, str]:
+    if not url or not isinstance(url, str):
+        raise WebfetchError("url is required and must be a string")
+    return _params({"url": url}, options)
+
+
+def _build_search(engine: str, query: str, options: Mapping[str, Any]) -> Dict[str, str]:
+    if engine not in SEARCH_ENGINES:
+        raise WebfetchError("engine must be one of " + ", ".join(SEARCH_ENGINES))
+    if not query or not isinstance(query, str):
+        raise WebfetchError("query is required and must be a string")
+    return _params({"search": query}, options)
 
 
 def _headers(api_key: Optional[str], options: Mapping[str, Any]) -> Dict[str, str]:
@@ -180,6 +198,38 @@ class WebfetchClient:
         options["extract_rules"] = dict(rules)
         return self.fetch(url, **options).json()
 
+    def search(self, engine: str, query: str, **options: Any) -> WebfetchResult:
+        """One page of ranked results from ``google``, ``bing`` or ``yahoo``, in the
+        shape of ScrapingBee's Google Search API; ``.json()`` is the response.
+
+        Keyword arguments: country_code, language, page, light_request,
+        search_type ("classic" or "ads"), add_html, tag, nfpr, extra_params.
+        Needs a paid plan with the robots.txt opt-out turned on for the key.
+        10 credits, or 15 with light_request=False.
+        """
+        params = _build_search(engine, query, options)
+        try:
+            response = self._client.get(self.base_url + engine, params=params,
+                                        headers=_headers(self.api_key, {}))
+        except httpx.TimeoutException as exc:
+            raise WebfetchError(f"The request timed out after {self.timeout}s") from exc
+        except httpx.HTTPError as exc:
+            raise WebfetchError(f"The request failed: {exc}") from exc
+        _raise_for_error(response)
+        return WebfetchResult(response, str(response.url))
+
+    def google(self, query: str, **options: Any) -> Dict[str, Any]:
+        """A Google search, as the parsed response."""
+        return self.search("google", query, **options).json()
+
+    def bing(self, query: str, **options: Any) -> Dict[str, Any]:
+        """A Bing search, as the parsed response."""
+        return self.search("bing", query, **options).json()
+
+    def yahoo(self, query: str, **options: Any) -> Dict[str, Any]:
+        """A Yahoo search, as the parsed response."""
+        return self.search("yahoo", query, **options).json()
+
     def usage(self) -> Dict[str, Any]:
         """Current credit and concurrency state. Requires a key."""
         if not self.api_key:
@@ -241,6 +291,27 @@ class AsyncWebfetchClient:
     async def extract(self, url: str, rules: Mapping[str, Any], **options: Any) -> Any:
         options["extract_rules"] = dict(rules)
         return (await self.fetch(url, **options)).json()
+
+    async def search(self, engine: str, query: str, **options: Any) -> WebfetchResult:
+        params = _build_search(engine, query, options)
+        try:
+            response = await self._client.get(self.base_url + engine, params=params,
+                                              headers=_headers(self.api_key, {}))
+        except httpx.TimeoutException as exc:
+            raise WebfetchError(f"The request timed out after {self.timeout}s") from exc
+        except httpx.HTTPError as exc:
+            raise WebfetchError(f"The request failed: {exc}") from exc
+        _raise_for_error(response)
+        return WebfetchResult(response, str(response.url))
+
+    async def google(self, query: str, **options: Any) -> Dict[str, Any]:
+        return (await self.search("google", query, **options)).json()
+
+    async def bing(self, query: str, **options: Any) -> Dict[str, Any]:
+        return (await self.search("bing", query, **options)).json()
+
+    async def yahoo(self, query: str, **options: Any) -> Dict[str, Any]:
+        return (await self.search("yahoo", query, **options)).json()
 
     async def usage(self) -> Dict[str, Any]:
         if not self.api_key:

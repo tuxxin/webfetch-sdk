@@ -39,6 +39,24 @@ A key is required. A [free account](https://webfetch.io/signup) starts with 1,00
 credits and gets 250 more each month (banking up to 1,000), and needs only a
 confirmed email address.
 
+## Search
+
+```js
+const results = await client.bing('python asyncio tutorial', { countryCode: 'us' });
+for (const r of results.organic_results) console.log(r.position, r.title, r.url);
+
+const ads = await client.search('yahoo', 'car insurance quotes', { searchType: 'ads' });
+console.log(ads.credits, ads.json().top_ads);
+```
+
+`bing()`, `yahoo()` and `google()` return the parsed response; `search(engine, query)`
+returns the result object, with `credits` and `json()`.
+Needs a paid plan with the robots.txt opt-out turned on for the key in the
+[key portal](https://webfetch.io/key): every engine's robots.txt disallows its
+result pages. Bing and Yahoo are open; Google answers `503 engine_unavailable`
+until it opens. 10 credits a page, 15 with `light_request` false; a failed
+search costs nothing. Reference: <https://webfetch.io/documentation#search>.
+
 ## Errors
 
 ```js

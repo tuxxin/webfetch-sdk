@@ -1,5 +1,5 @@
 /**
- * Official JavaScript client for the webfetch.io scraping API.
+ * Official JavaScript client for the webfetch.io scraping and search API.
  *
  * Node 18+ and modern browsers. Uses the platform fetch, so there are no runtime
  * dependencies.
@@ -94,7 +94,36 @@ const CAMEL_TO_SNAKE = {
   transparentStatusCode: 'transparent_status_code',
   respectRobots: 'respect_robots',
   maxCost: 'max_cost',
+  // Search API
+  lightRequest: 'light_request',
+  searchType: 'search_type',
+  addHtml: 'add_html',
+  extraParams: 'extra_params',
+  nbResults: 'nb_results',
 };
+
+/** The search endpoints. Google answers 503 engine_unavailable until it opens. */
+export const SEARCH_ENGINES = ['google', 'bing', 'yahoo'];
+
+/** Options to query parameters: camelCase or snake_case names, booleans as true/false. */
+function toParams(params, options) {
+  for (const [key, value] of Object.entries(options)) {
+    if (value === undefined || value === null || key === 'headers') continue;
+    const name = CAMEL_TO_SNAKE[key] || key;
+    // extract_rules and js_scenario go over the wire as stringified JSON;
+    // extra_params as a URL-encoded string.
+    if ((name === 'extract_rules' || name === 'js_scenario') && typeof value === 'object') {
+      params.set(name, JSON.stringify(value));
+    } else if (name === 'extra_params' && typeof value === 'object') {
+      params.set(name, new URLSearchParams(value).toString());
+    } else if (typeof value === 'boolean') {
+      params.set(name, value ? 'true' : 'false');
+    } else {
+      params.set(name, String(value));
+    }
+  }
+  return params;
+}
 
 export class WebfetchClient {
   /**
@@ -121,6 +150,56 @@ export class WebfetchClient {
     if (!url || typeof url !== 'string') {
       throw new WebfetchError('url is required and must be a string');
     }
+    const params = toParams(new URLSearchParams({ url }), options);
+    const headers = {};
+    // Forwarded headers are prefixed Wf-, and the prefix is stripped downstream.
+    for (const [k, v] of Object.entries(options.headers || {})) {
+      headers[`Wf-${k}`] = String(v);
+      params.set('forward_headers', 'true');
+    }
+    return this._request('', params, headers, url);
+  }
+
+  /**
+   * Search Google, Bing or Yahoo and get one page of ranked results as JSON,
+   * in the shape of ScrapingBee's Google Search API. The result's json() is
+   * the response: organic_results, top_ads, bottom_ads, related_searches, ...
+   *
+   * Needs a paid plan with the robots.txt opt-out turned on for the key.
+   * 10 credits, or 15 with lightRequest: false.
+   *
+   * @param {'google'|'bing'|'yahoo'} engine
+   * @param {string} query
+   * @param {object} [options] countryCode, language, page, lightRequest, searchType ('classic' or 'ads'), ...
+   * @returns {Promise<WebfetchResult>}
+   */
+  async search(engine, query, options = {}) {
+    if (!SEARCH_ENGINES.includes(engine)) {
+      throw new WebfetchError(`engine must be one of ${SEARCH_ENGINES.join(', ')}`);
+    }
+    if (!query || typeof query !== 'string') {
+      throw new WebfetchError('query is required and must be a string');
+    }
+    return this._request(engine, toParams(new URLSearchParams({ search: query }), options), {}, null);
+  }
+
+  /** Convenience: a Google search, as the parsed response JSON. */
+  async google(query, options = {}) {
+    return (await this.search('google', query, options)).json();
+  }
+
+  /** Convenience: a Bing search, as the parsed response JSON. */
+  async bing(query, options = {}) {
+    return (await this.search('bing', query, options)).json();
+  }
+
+  /** Convenience: a Yahoo search, as the parsed response JSON. */
+  async yahoo(query, options = {}) {
+    return (await this.search('yahoo', query, options)).json();
+  }
+
+  /** One GET to the API, with its errors mapped to the exception classes. */
+  async _request(path, params, extraHeaders, requestedUrl) {
     if (!this.apiKey) {
       // Fail here rather than spending a round trip on a request that cannot
       // succeed: the API has no keyless tier.
@@ -128,36 +207,14 @@ export class WebfetchClient {
         'An API key is required. Get a free one at https://webfetch.io/signup'
       );
     }
-
-    const params = new URLSearchParams();
-    params.set('url', url);
-
-    for (const [key, value] of Object.entries(options)) {
-      if (value === undefined || value === null || key === 'headers') continue;
-      const name = CAMEL_TO_SNAKE[key] || key;
-      // extract_rules and js_scenario go over the wire as stringified JSON.
-      if ((name === 'extract_rules' || name === 'js_scenario') && typeof value === 'object') {
-        params.set(name, JSON.stringify(value));
-      } else if (typeof value === 'boolean') {
-        params.set(name, value ? 'true' : 'false');
-      } else {
-        params.set(name, String(value));
-      }
-    }
-
-    const headers = { Accept: '*/*', Authorization: `Bearer ${this.apiKey}` };
-    // Forwarded headers are prefixed Wf-, and the prefix is stripped downstream.
-    for (const [k, v] of Object.entries(options.headers || {})) {
-      headers[`Wf-${k}`] = String(v);
-      params.set('forward_headers', 'true');
-    }
+    const headers = { Accept: '*/*', Authorization: `Bearer ${this.apiKey}`, ...extraHeaders };
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.timeout);
 
     let response;
     try {
-      response = await globalThis.fetch(`${this.baseUrl}?${params.toString()}`, {
+      response = await globalThis.fetch(`${this.baseUrl}${path}?${params.toString()}`, {
         method: 'GET',
         headers,
         signal: controller.signal,
@@ -196,7 +253,7 @@ export class WebfetchClient {
       content: body,
       credits: Number(h.get('Wf-Cost') ?? 0),
       status: Number(h.get('Wf-Initial-Status-Code') ?? response.status),
-      resolvedUrl: h.get('Wf-Resolved-Url') || url,
+      resolvedUrl: h.get('Wf-Resolved-Url') || requestedUrl,
       headers: Object.fromEntries(h.entries()),
       proxyPool: h.get('Wf-Proxy-Pool'),
       proxyDowngraded: h.get('Wf-Proxy-Downgraded') === 'true',

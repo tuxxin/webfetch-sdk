@@ -1,9 +1,9 @@
 {
   "name": "tuxxin/webfetch",
-  "description": "Official PHP client for the webfetch.io scraping API.",
+  "description": "Official PHP client for the webfetch.io scraping API: fetch any URL, and get ranked search results as JSON.",
   "type": "library",
   "license": "MIT",
-  "keywords": ["scraping", "scraper", "crawler", "headless", "extraction", "webfetch", "scrapingbee"],
+  "keywords": ["scraping", "scraper", "crawler", "headless", "extraction", "webfetch", "scrapingbee", "serp", "search-api"],
   "homepage": "https://webfetch.io/documentation",
   "authors": [{ "name": "Tuxxin" }],
   "support": {

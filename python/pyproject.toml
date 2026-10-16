@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "webfetch-io"
-version = "1.0.0"
-description = "Official Python client for the webfetch.io scraping API."
+version = "1.1.0"
+description = "Official Python client for the webfetch.io scraping API: fetch any URL, and get ranked search results as JSON."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Tuxxin" }]
 requires-python = ">=3.9"
 dependencies = ["httpx>=0.24"]
-keywords = ["scraping", "scraper", "crawler", "headless", "extraction", "webfetch"]
+keywords = ["scraping", "scraper", "crawler", "headless", "extraction", "webfetch", "serp", "search-api"]
 classifiers = [
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
