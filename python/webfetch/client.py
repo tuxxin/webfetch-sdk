@@ -20,7 +20,7 @@ DEFAULT_TIMEOUT = 180.0
 # Sent as stringified JSON rather than as a nested query structure.
 _JSON_PARAMS = ("extract_rules", "js_scenario")
 
-#: The search endpoints. Google answers 503 engine_unavailable until it opens.
+#: The search endpoints.
 SEARCH_ENGINES = ("google", "bing", "yahoo")
 
 

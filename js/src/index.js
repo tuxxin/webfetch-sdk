@@ -102,7 +102,7 @@ const CAMEL_TO_SNAKE = {
   nbResults: 'nb_results',
 };
 
-/** The search endpoints. Google answers 503 engine_unavailable until it opens. */
+/** The search endpoints. */
 export const SEARCH_ENGINES = ['google', 'bing', 'yahoo'];
 
 /** Options to query parameters: camelCase or snake_case names, booleans as true/false. */

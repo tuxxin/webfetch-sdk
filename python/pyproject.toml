@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "webfetch-io"
-version = "1.1.0"
+version = "1.1.1"
 description = "Official Python client for the webfetch.io scraping API: fetch any URL, and get ranked search results as JSON."
 readme = "README.md"
 license = { text = "MIT" }

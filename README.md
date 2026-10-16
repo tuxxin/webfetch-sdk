@@ -38,8 +38,7 @@ client.search("yahoo", query, search_type="ads")   the ads only, same price
 The response has the shape of ScrapingBee's Google Search API.
 Needs a paid plan with the robots.txt opt-out turned on for the key in the
 [key portal](https://webfetch.io/key): every engine's robots.txt disallows its
-result pages. Bing and Yahoo are open; Google answers `503 engine_unavailable`
-until it opens. 10 credits a page, 15 with `light_request` false; a failed
+result pages. Google, Bing and Yahoo are all open. 10 credits a page, 15 with `light_request` false; a failed
 search costs nothing. Reference: <https://webfetch.io/documentation#search>.
 
 ## Credits

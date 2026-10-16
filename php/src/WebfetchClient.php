@@ -16,7 +16,7 @@ final class WebfetchClient
 {
     private const JSON_PARAMS = ['extract_rules', 'js_scenario'];
 
-    /** The search endpoints. Google answers 503 engine_unavailable until it opens. */
+    /** The search endpoints. */
     public const SEARCH_ENGINES = ['google', 'bing', 'yahoo'];
 
     private string $baseUrl;
