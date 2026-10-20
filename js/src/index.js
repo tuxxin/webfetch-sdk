@@ -103,7 +103,7 @@ const CAMEL_TO_SNAKE = {
 };
 
 /** The search endpoints. */
-export const SEARCH_ENGINES = ['google', 'bing', 'yahoo'];
+export const SEARCH_ENGINES = ['google', 'bing', 'yahoo', 'brave'];
 
 /** Options to query parameters: camelCase or snake_case names, booleans as true/false. */
 function toParams(params, options) {
@@ -161,14 +161,14 @@ export class WebfetchClient {
   }
 
   /**
-   * Search Google, Bing or Yahoo and get one page of ranked results as JSON,
+   * Search Google, Bing, Yahoo or Brave and get one page of ranked results as JSON,
    * in the shape of ScrapingBee's Google Search API. The result's json() is
    * the response: organic_results, top_ads, bottom_ads, related_searches, ...
    *
    * Needs a paid plan with the robots.txt opt-out turned on for the key.
    * 10 credits, or 15 with lightRequest: false.
    *
-   * @param {'google'|'bing'|'yahoo'} engine
+   * @param {'google'|'bing'|'yahoo'|'brave'} engine
    * @param {string} query
    * @param {object} [options] countryCode, language, page, lightRequest, searchType ('classic' or 'ads'), ...
    * @returns {Promise<WebfetchResult>}
@@ -196,6 +196,11 @@ export class WebfetchClient {
   /** Convenience: a Yahoo search, as the parsed response JSON. */
   async yahoo(query, options = {}) {
     return (await this.search('yahoo', query, options)).json();
+  }
+
+  /** Convenience: a Brave search, as the parsed response JSON. */
+  async brave(query, options = {}) {
+    return (await this.search('brave', query, options)).json();
   }
 
   /** One GET to the API, with its errors mapped to the exception classes. */

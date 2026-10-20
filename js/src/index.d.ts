@@ -148,7 +148,7 @@ export interface SearchResponse {
   html?: string;
 }
 
-export declare const SEARCH_ENGINES: readonly ['google', 'bing', 'yahoo'];
+export declare const SEARCH_ENGINES: readonly ['google', 'bing', 'yahoo', 'brave'];
 
 export declare class WebfetchClient {
   constructor(apiKey?: string | null, options?: { baseUrl?: string; timeout?: number });
@@ -156,10 +156,11 @@ export declare class WebfetchClient {
   markdown(url: string, options?: FetchOptions): Promise<string>;
   extract<T = unknown>(url: string, rules: object, options?: FetchOptions): Promise<T>;
   /** One page of ranked results. Needs a paid plan with the robots.txt opt-out on. */
-  search(engine: 'google' | 'bing' | 'yahoo', query: string, options?: SearchOptions): Promise<WebfetchResult>;
+  search(engine: 'google' | 'bing' | 'yahoo' | 'brave', query: string, options?: SearchOptions): Promise<WebfetchResult>;
   google(query: string, options?: SearchOptions): Promise<SearchResponse>;
   bing(query: string, options?: SearchOptions): Promise<SearchResponse>;
   yahoo(query: string, options?: SearchOptions): Promise<SearchResponse>;
+  brave(query: string, options?: SearchOptions): Promise<SearchResponse>;
   usage(): Promise<Usage>;
 }
 

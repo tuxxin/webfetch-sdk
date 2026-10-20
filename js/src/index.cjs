@@ -26,12 +26,13 @@ class WebfetchClient {
   async google(query, options = {})         { return (await this._client()).google(query, options); }
   async bing(query, options = {})           { return (await this._client()).bing(query, options); }
   async yahoo(query, options = {})          { return (await this._client()).yahoo(query, options); }
+  async brave(query, options = {})          { return (await this._client()).brave(query, options); }
   async usage()                             { return (await this._client()).usage(); }
 }
 
 module.exports = WebfetchClient;
 module.exports.WebfetchClient = WebfetchClient;
-module.exports.SEARCH_ENGINES = ['google', 'bing', 'yahoo'];
+module.exports.SEARCH_ENGINES = ['google', 'bing', 'yahoo', 'brave'];
 module.exports.errors = async () => {
   const m = await load();
   return {

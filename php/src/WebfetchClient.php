@@ -17,7 +17,7 @@ final class WebfetchClient
     private const JSON_PARAMS = ['extract_rules', 'js_scenario'];
 
     /** The search endpoints. */
-    public const SEARCH_ENGINES = ['google', 'bing', 'yahoo'];
+    public const SEARCH_ENGINES = ['google', 'bing', 'yahoo', 'brave'];
 
     private string $baseUrl;
 
@@ -62,7 +62,7 @@ final class WebfetchClient
     }
 
     /**
-     * One page of ranked results from google, bing or yahoo, in the shape of
+     * One page of ranked results from google, bing, yahoo or brave, in the shape of
      * ScrapingBee's Google Search API; the result's json() is the response.
      *
      * Needs a paid plan with the robots.txt opt-out turned on for the key.
@@ -99,6 +99,12 @@ final class WebfetchClient
     public function yahoo(string $query, array $options = []): array
     {
         return $this->search('yahoo', $query, $options)->json();
+    }
+
+    /** A Brave search, as the decoded response. */
+    public function brave(string $query, array $options = []): array
+    {
+        return $this->search('brave', $query, $options)->json();
     }
 
     /** @param array<string,mixed> $options */

@@ -4,7 +4,7 @@ Official clients for the [webfetch.io](https://webfetch.io) scraping and search
 API, in JavaScript, Python and PHP. MIT licensed.
 
 Each one wraps `GET https://api.webfetch.io/v1/` and the search endpoints
-(`/v1/bing`, `/v1/yahoo`, `/v1/google`). The API is ScrapingBee-compatible, so
+(`/v1/google`, `/v1/bing`, `/v1/yahoo`, `/v1/brave`). The API is ScrapingBee-compatible, so
 parameter names, defaults and credit costs match.
 
 | Language | Install | Requires |
@@ -38,7 +38,7 @@ client.search("yahoo", query, search_type="ads")   the ads only, same price
 The response has the shape of ScrapingBee's Google Search API.
 Needs a paid plan with the robots.txt opt-out turned on for the key in the
 [key portal](https://webfetch.io/key): every engine's robots.txt disallows its
-result pages. Google, Bing and Yahoo are all open. 10 credits a page, 15 with `light_request` false; a failed
+result pages. Google, Bing, Yahoo and Brave are all open. 10 credits a page, 15 with `light_request` false; a failed
 search costs nothing. Reference: <https://webfetch.io/documentation#search>.
 
 ## Credits

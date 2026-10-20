@@ -1,6 +1,6 @@
 {
   "name": "@tuxxin/webfetch",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Official JavaScript client for the webfetch.io scraping API. Fetch any URL as HTML, text, markdown or structured JSON, and get ranked search results as JSON.",
   "license": "MIT",
   "author": "Tuxxin",

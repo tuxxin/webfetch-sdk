@@ -21,7 +21,7 @@ DEFAULT_TIMEOUT = 180.0
 _JSON_PARAMS = ("extract_rules", "js_scenario")
 
 #: The search endpoints.
-SEARCH_ENGINES = ("google", "bing", "yahoo")
+SEARCH_ENGINES = ("google", "bing", "yahoo", "brave")
 
 
 class WebfetchError(Exception):
@@ -199,7 +199,7 @@ class WebfetchClient:
         return self.fetch(url, **options).json()
 
     def search(self, engine: str, query: str, **options: Any) -> WebfetchResult:
-        """One page of ranked results from ``google``, ``bing`` or ``yahoo``, in the
+        """One page of ranked results from ``google``, ``bing``, ``yahoo`` or ``brave``, in the
         shape of ScrapingBee's Google Search API; ``.json()`` is the response.
 
         Keyword arguments: country_code, language, page, light_request,
@@ -229,6 +229,10 @@ class WebfetchClient:
     def yahoo(self, query: str, **options: Any) -> Dict[str, Any]:
         """A Yahoo search, as the parsed response."""
         return self.search("yahoo", query, **options).json()
+
+    def brave(self, query: str, **options: Any) -> Dict[str, Any]:
+        """A Brave search, as the parsed response."""
+        return self.search("brave", query, **options).json()
 
     def usage(self) -> Dict[str, Any]:
         """Current credit and concurrency state. Requires a key."""
@@ -312,6 +316,9 @@ class AsyncWebfetchClient:
 
     async def yahoo(self, query: str, **options: Any) -> Dict[str, Any]:
         return (await self.search("yahoo", query, **options)).json()
+
+    async def brave(self, query: str, **options: Any) -> Dict[str, Any]:
+        return (await self.search("brave", query, **options)).json()
 
     async def usage(self) -> Dict[str, Any]:
         if not self.api_key:

@@ -49,11 +49,11 @@ const ads = await client.search('yahoo', 'car insurance quotes', { searchType: '
 console.log(ads.credits, ads.json().top_ads);
 ```
 
-`bing()`, `yahoo()` and `google()` return the parsed response; `search(engine, query)`
+`google()`, `bing()`, `yahoo()` and `brave()` return the parsed response; `search(engine, query)`
 returns the result object, with `credits` and `json()`.
 Needs a paid plan with the robots.txt opt-out turned on for the key in the
 [key portal](https://webfetch.io/key): every engine's robots.txt disallows its
-result pages. Google, Bing and Yahoo are all open. 10 credits a page, 15 with `light_request` false; a failed
+result pages. Google, Bing, Yahoo and Brave are all open. 10 credits a page, 15 with `light_request` false; a failed
 search costs nothing. Reference: <https://webfetch.io/documentation#search>.
 
 ## Errors
